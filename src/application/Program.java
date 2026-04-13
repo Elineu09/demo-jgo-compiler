@@ -1,6 +1,6 @@
 package application;
 
-import java.util.List;
+import java.util.Map;
 
 import util.FileReaderUtil;
 
@@ -9,9 +9,9 @@ public class Program {
 	public static void main(String[] args) {
 		String path = "C:/temp/programa.txt";
 		
-		List<String> code = FileReaderUtil.readSourceFile(path);
+		Map<String, String> code = FileReaderUtil.readSourceFile(path);
 		
-		code.forEach(System.out::println);
+		code.forEach((key, value) -> System.out.printf("%s %s%n",key,value));
 	}
 
 }

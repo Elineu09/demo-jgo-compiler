@@ -4,21 +4,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class FileReaderUtil {
-	public static List<String> readSourceFile(String path) {
+	public static Map<String, String> readSourceFile(String path) {
 		File file = new File(path);
-		List<String> code = new ArrayList<>();
+		Map<String, String> code = new LinkedHashMap<>();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line = br.readLine();
 
 			int i = 1;
 			while (line != null) {
-				// System.out.printf("%d %s%n", i, line);
-				code.add(line);
+				code.put(String.valueOf(i), line);
 				line = br.readLine();
 				i++;
 			}
