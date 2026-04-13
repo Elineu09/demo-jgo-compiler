@@ -7,11 +7,11 @@ import util.FileReaderUtil;
 public class Program {
 
 	public static void main(String[] args) {
-		String path = "C:/temp/programa.txt";
+		String path = "C:/temp/compiladores/programa.go";
 		
-		Map<String, String> code = FileReaderUtil.readSourceFile(path);
+		Map<String, String> sourceCode = FileReaderUtil.readSourceFile(path);
 		
-		code.forEach((key, value) -> System.out.printf("%s %s%n",key,value));
+		sourceCode.forEach((key, value) -> System.out.printf("%s %s%n",key,value));
 	}
 
 }

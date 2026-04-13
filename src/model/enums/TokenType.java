@@ -2,84 +2,78 @@ package model.enums;
 
 public enum TokenType {
 
-	// KEYWORDS
-    ABSTRACT, ASSERT, BOOLEAN, BREAK, BYTE,
-    CASE, CATCH, CHAR, CLASS, CONST,
-    CONTINUE, DEFAULT, DO, DOUBLE, ELSE,
-    ENUM, EXTENDS, FINAL, FINALLY, FLOAT,
-    FOR, GOTO, IF, IMPLEMENTS, IMPORT,
-    INSTANCEOF, INT, INTERFACE, LONG, NATIVE,
-    NEW, PACKAGE, PRIVATE, PROTECTED, PUBLIC,
-    RETURN, SHORT, STATIC, STRICTFP, SUPER,
-    SWITCH, SYNCHRONIZED, THIS, THROW, THROWS,
-    TRANSIENT, TRY, VOID, VOLATILE, WHILE,
-
-    // KEYWORDS (java moderno)
-    VAR, YIELD, RECORD, SEALED, PERMITS, NON_SEALED,
-
+    // KEYWORDS
+    BREAK, DEFAULT, FUNC, INTERFACE, SELECT,
+    CASE, DEFER, GO, MAP, STRUCT,
+    CHAN, ELSE, GOTO, PACKAGE, SWITCH,
+    CONST, FALLTHROUGH, IF, RANGE, TYPE,
+    CONTINUE, FOR, IMPORT, RETURN, VAR,
 
     // IDENTIFIERS
     IDENTIFIER,
 
     // LITERALS
-    INTEGER_LITERAL,
+    INT_LITERAL,
     FLOAT_LITERAL,
-    BOOLEAN_LITERAL,
-    CHAR_LITERAL,
+    IMAGINARY_LITERAL,
+    RUNE_LITERAL,      // char 
     STRING_LITERAL,
-    NULL_LITERAL,
+
+    TRUE, FALSE,       // bool literals
+    NIL,               // null equivalente
 
     // OPERATORS
 
     // Aritméticos
     PLUS, MINUS, MULTIPLY, DIVIDE, MOD,
 
-    // Incremento / Decremento
+    // Incremento / Decremento 
     INCREMENT, DECREMENT,
 
     // Atribuição
-    ASSIGN,
+    ASSIGN,            // =
+    DEFINE,            // :=
+
     PLUS_ASSIGN, MINUS_ASSIGN, MULTIPLY_ASSIGN, DIVIDE_ASSIGN, MOD_ASSIGN,
     AND_ASSIGN, OR_ASSIGN, XOR_ASSIGN,
-    LEFT_SHIFT_ASSIGN, RIGHT_SHIFT_ASSIGN, UNSIGNED_RIGHT_SHIFT_ASSIGN,
+    LEFT_SHIFT_ASSIGN, RIGHT_SHIFT_ASSIGN,
+    BIT_CLEAR_ASSIGN,  // &^
 
     // Relacionais
     EQUAL, NOT_EQUAL,
-    GREATER, LESS, GREATER_EQUAL, LESS_EQUAL,
+    LESS, LESS_EQUAL,
+    GREATER, GREATER_EQUAL,
 
     // Lógicos
-    LOGICAL_AND, LOGICAL_OR, LOGICAL_NOT,
+    LOGICAL_AND, LOGICAL_OR, LOGICAL_NOT, 
 
     // Bitwise
-    BITWISE_AND, BITWISE_OR, BITWISE_XOR, BITWISE_NOT,
+    BITWISE_AND, BITWISE_OR, BITWISE_XOR, BITWISE_NOT, // &, |, ^, ^
+    BIT_CLEAR,         // &^
 
     // Shift
-    LEFT_SHIFT, RIGHT_SHIFT, UNSIGNED_RIGHT_SHIFT,
+    LEFT_SHIFT, RIGHT_SHIFT, // <<, >>
 
-    // Ternário
-    QUESTION, COLON,
-
-    // Outros
-    INSTANCEOF_OPERATOR,
+    // Canal
+    ARROW,             // <-
 
     // SEPARATORS
     LPAREN, RPAREN,           // ( )
     LBRACE, RBRACE,           // { }
     LBRACKET, RBRACKET,       // [ ]
-    SEMICOLON,                // ;
     COMMA,                    // ,
     DOT,                      // .
+    SEMICOLON,                // ; 
+    COLON,                    // :
     ELLIPSIS,                 // ...
-    AT,                       // @
-    DOUBLE_COLON,             // ::
 
     // COMMENTS
-    LINE_COMMENT,
-    BLOCK_COMMENT,
-    DOC_COMMENT,
+    LINE_COMMENT,             // //
+    BLOCK_COMMENT,            // /* */
 
     // SPECIAL
     WHITESPACE,
+    NEWLINE,
     UNKNOWN,
     EOF
 }
