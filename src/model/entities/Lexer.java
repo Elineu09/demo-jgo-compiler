@@ -1,26 +1,24 @@
 package model.entities;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import model.enums.TokenType;
 
 public class Lexer implements IScanner {
-    private List<String> sourceCode;
-    private int linhaAtual = 0;
-    private int colunaAtual = 0;
-    private List<Token> symbolTable = new ArrayList<>();
-    
-    private Map<String, TokenType> keywords = new HashMap<>();
 
-    public Lexer(List<String> sourceCode) {
-        this.sourceCode = sourceCode;
-        initKeywords();
-    }
+	private List<String> sourceCode;
+	private int linhaAtual = 0;
+	private int colunaAtual = 0;
 
-    private void initKeywords() {
+	private List<Token> symbolTable = new ArrayList<>();
+	private Map<String, TokenType> keywords = new HashMap<>();
+
+	public Lexer(List<String> sourceCode) {
+		this.sourceCode = sourceCode;
+		initKeywords();
+	}
+
+	private void initKeywords() {
         keywords.put("break", TokenType.BREAK);
         keywords.put("default", TokenType.DEFAULT);
         keywords.put("func", TokenType.FUNC);
@@ -57,150 +55,391 @@ public class Lexer implements IScanner {
         keywords.put("nil", TokenType.NIL);
     }
 
-    @Override
-    public char lerCaractere() {
-        if (linhaAtual >= sourceCode.size()) {
-            return '\0';
-        }
+	@Override
+	public char lerCaractere() {
+		if (linhaAtual >= sourceCode.size())
+			return '\0';
 
-        String linha = sourceCode.get(linhaAtual);
+		String linha = sourceCode.get(linhaAtual);
 
-        if (colunaAtual >= linha.length()) {
-            linhaAtual++;
-            colunaAtual = 0;
-            return lerCaractere(); 
-        }
+		if (colunaAtual >= linha.length()) {
+			linhaAtual++;
+			colunaAtual = 0;
+			return '\n';
+		}
 
-        char c = linha.charAt(colunaAtual);
-        colunaAtual++;
-        return c;
-    }
+		return linha.charAt(colunaAtual++);
+	}
 
-    @Override
-    public void voltarCaractere() {
-        if (colunaAtual > 0) {
-            colunaAtual--;
-        } else if (linhaAtual > 0) {
-            linhaAtual--;
-            colunaAtual = sourceCode.get(linhaAtual).length() - 1;
-        }
-    }
+	@Override
+	public void voltarCaractere() {
+		if (colunaAtual > 0) {
+			colunaAtual--;
+		} else if (linhaAtual > 0) {
+			linhaAtual--;
+			colunaAtual = sourceCode.get(linhaAtual).length();
+		}
+	}
 
-    @Override
-    public void gravarTokenLexema(TokenType type, String lexeme) {
-        if (type == TokenType.IDENTIFIER && keywords.containsKey(lexeme)) {
-            type = keywords.get(lexeme);
-        }
-        
-        Token token = new Token(type, lexeme, linhaAtual + 1, colunaAtual);
-        symbolTable.add(token);
-        System.out.println("Gravado: " + token);
-    }
+	@Override
+	public void gravarTokenLexema(TokenType type, String lexeme) {
 
-    @Override
-    public void analex() {
-        char c = lerCaractere();
+		if (type == TokenType.IDENTIFIER && keywords.containsKey(lexeme)) {
+			type = keywords.get(lexeme);
+		}
 
-        // O loop principal continua até encontrarmos o fim do ficheiro (EOF)
-        while (c != '\0') {
-            
-            // 1. Ignorar espaços em branco e quebras de linha no estado inicial
-            while (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
-                c = lerCaractere();
-            }
+		Token token = new Token(type, lexeme, linhaAtual + 1, colunaAtual);
+		symbolTable.add(token);
 
-            // Se chegámos ao fim do ficheiro depois de ignorar os espaços, saímos do loop
-            if (c == '\0') break;
+		System.out.println(token);
+	}
 
-            int state = 0; // Reiniciamos o estado para o q0
-            StringBuilder lexeme = new StringBuilder();
-            boolean tokenFound = false;
+	@Override
+	public void analex() {
 
-            // Loop secundário para construir um único token
-            while (!tokenFound && c != '\0') {
-                switch (state) {
-                    
-                    case 0: // ESTADO INICIAL (q0)
-                        if (Character.isLetter(c) || c == '_') {
-                            state = 1; // Vai para q1 (Identificador / Palavra-chave)
-                            lexeme.append(c);
-                            c = lerCaractere();
-                        } 
-                        else if (Character.isDigit(c)) {
-                            state = 2; // Vai para q2 (Número Inteiro)
-                            lexeme.append(c);
-                            c = lerCaractere();
-                        } 
-                        else if (c == '=') {
-                            state = 54; // Vai para q54 (Verificar Atribuição ou Igualdade)
-                            lexeme.append(c);
-                            c = lerCaractere();
-                        } 
-                        else {
-                            // Símbolos de 1 caractere (pontuação, parênteses, etc.)
-                            lexeme.append(c);
-                            TokenType type = TokenType.UNKNOWN;
-                            
-                            // Exemplos de mapeamento direto:
-                            if (c == '[') type = TokenType.LBRACKET;
-                            else if (c == ']') type = TokenType.RBRACKET;
-                            else if (c == '(') type = TokenType.LPAREN;
-                            else if (c == ')') type = TokenType.RPAREN;
-                            else if (c == '+') type = TokenType.PLUS;
-                            // ... podes adicionar os restantes símbolos de 1 caractere aqui
+		char c = lerCaractere();
 
-                            gravarTokenLexema(type, lexeme.toString());
-                            tokenFound = true;
-                            c = lerCaractere(); // Lê o próximo para o token seguinte
-                        }
-                        break;
+		while (c != '\0') {
 
-                    case 1: // q1: CONSTRUINDO IDENTIFICADOR
-                        if (Character.isLetterOrDigit(c) || c == '_') {
-                            lexeme.append(c);
-                            c = lerCaractere();
-                        } else {
-                            // Lemos "outro" caractere que não pertence ao identificador!
-                            voltarCaractere(); 
-                            gravarTokenLexema(TokenType.IDENTIFIER, lexeme.toString());
-                            tokenFound = true;
-                            c = lerCaractere(); // Relê o caractere devolvido para iniciar o próximo token
-                        }
-                        break;
+			while (Character.isWhitespace(c)) {
+				c = lerCaractere();
+			}
 
-                    case 2: // q2: CONSTRUINDO NÚMERO INTEIRO
-                        if (Character.isDigit(c)) {
-                            lexeme.append(c);
-                            c = lerCaractere();
-                        } else {
-                            // Lemos "outro" caractere (ex: um espaço ou um ponto e vírgula)
-                            voltarCaractere();
-                            gravarTokenLexema(TokenType.INT_LITERAL, lexeme.toString());
-                            tokenFound = true;
-                            c = lerCaractere();
-                        }
-                        break;
+			if (c == '\0')
+				break;
 
-                    case 54: // q54: LEMOS UM '=' NO q0
-                        if (c == '=') {
-                            // Lemos outro '=', logo o lexema é "=="
-                            lexeme.append(c);
-                            gravarTokenLexema(TokenType.EQUAL, lexeme.toString());
-                            tokenFound = true;
-                            c = lerCaractere();
-                        } else {
-                            // Lemos "outro" caractere, então era apenas uma atribuição "="
-                            voltarCaractere();
-                            gravarTokenLexema(TokenType.ASSIGN, lexeme.toString());
-                            tokenFound = true;
-                            c = lerCaractere();
-                        }
-                        break;
-                }
-            }
-        }
-        
-        // Quando o loop termina, gravamos o token final
-        gravarTokenLexema(TokenType.EOF, "EOF");
-    }
+			int state = 0;
+			StringBuilder lexeme = new StringBuilder();
+			boolean done = false;
+
+			while (!done) {
+
+				switch (state) {
+
+				// Estado inicial
+				case 0:
+
+					if (Character.isLetter(c) || c == '_') {
+						state = 1;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (Character.isDigit(c)) {
+						state = 2;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '"') {
+						state = 10; // string
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '\'') {
+						state = 11; // rune
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '/') {
+						state = 20; // comentário ou divisão
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == ':') {
+						state = 30; // :=
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '<') {
+						state = 40;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '>') {
+						state = 41;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '&') {
+						state = 42;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '|') {
+						state = 43;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '+') {
+						state = 44;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '-') {
+						state = 45;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '=') {
+						state = 46;
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else {
+						lexeme.append(c);
+						gravarTokenLexema(mapSingleChar(c), lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+
+					break;
+
+				// Identificador
+				case 1:
+					if (Character.isLetterOrDigit(c) || c == '_') {
+						lexeme.append(c);
+						c = lerCaractere();
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.IDENTIFIER, lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+					break;
+
+				// Número (int / float)
+				case 2:
+					if (Character.isDigit(c)) {
+						lexeme.append(c);
+						c = lerCaractere();
+					} else if (c == '.') {
+						state = 3;
+						lexeme.append(c);
+						c = lerCaractere();
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.INT_LITERAL, lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+					break;
+
+				case 3:
+					if (Character.isDigit(c)) {
+						lexeme.append(c);
+						c = lerCaractere();
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.FLOAT_LITERAL, lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+					break;
+
+				// String
+				case 10:
+					if (c != '"') {
+						lexeme.append(c);
+						c = lerCaractere();
+					} else {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.STRING_LITERAL, lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+					break;
+
+				// Rune
+				case 11:
+					lexeme.append(c);
+					c = lerCaractere();
+
+					if (c == '\'') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.RUNE_LITERAL, lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+					break;
+
+				// Comentários
+				case 20:
+					if (c == '/') {
+						state = 21; // linha
+					} else if (c == '*') {
+						state = 22; // bloco
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.DIVIDE, lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+					break;
+
+				case 21: // linha
+					while (c != '\n' && c != '\0') {
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+					gravarTokenLexema(TokenType.LINE_COMMENT, lexeme.toString());
+					done = true;
+					break;
+
+				case 22: // bloco
+					while (true) {
+						if (c == '*' && lerCaractere() == '/') {
+							break;
+						}
+						c = lerCaractere();
+					}
+					gravarTokenLexema(TokenType.BLOCK_COMMENT, lexeme.toString());
+					done = true;
+					c = lerCaractere();
+					break;
+
+				// :=
+				case 30:
+					if (c == '=') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.DEFINE, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.COLON, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				// <, <<, <=, <-
+				case 40:
+					if (c == '=') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.LESS_EQUAL, lexeme.toString());
+					} else if (c == '<') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.LEFT_SHIFT, lexeme.toString());
+					} else if (c == '-') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.ARROW, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.LESS, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				// >, >>, >=
+				case 41:
+					if (c == '=') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.GREATER_EQUAL, lexeme.toString());
+					} else if (c == '>') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.RIGHT_SHIFT, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.GREATER, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				// &, &^
+				case 42:
+					if (c == '^') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.BIT_CLEAR, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.BITWISE_AND, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				case 43:
+					gravarTokenLexema(TokenType.BITWISE_OR, lexeme.toString());
+					done = true;
+					break;
+
+				case 44:
+					if (c == '+') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.INCREMENT, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.PLUS, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				case 45:
+					if (c == '-') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.DECREMENT, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.MINUS, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				case 46:
+					if (c == '=') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.EQUAL, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.ASSIGN, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+				}
+			}
+		}
+
+		gravarTokenLexema(TokenType.EOF, "EOF");
+	}
+
+	private TokenType mapSingleChar(char c) {
+
+		switch (c) {
+		case '(':
+			return TokenType.LPAREN;
+		case ')':
+			return TokenType.RPAREN;
+		case '{':
+			return TokenType.LBRACE;
+		case '}':
+			return TokenType.RBRACE;
+		case '[':
+			return TokenType.LBRACKET;
+		case ']':
+			return TokenType.RBRACKET;
+		case ';':
+			return TokenType.SEMICOLON;
+		case ',':
+			return TokenType.COMMA;
+		case '.':
+			return TokenType.DOT;
+		default:
+			return TokenType.UNKNOWN;
+		}
+	}
 }

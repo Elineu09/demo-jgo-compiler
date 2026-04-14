@@ -6,11 +6,11 @@ import util.FileReaderUtil;
 
 public class Program {
     public static void main(String[] args) {
-        String path = "C:/temp/compiladores/programa.go"; // Garante que este ficheiro existe!
+        String path = "C:/temp/compiladores/programa.go"; 
         
         List<String> sourceCode = FileReaderUtil.readSourceFile(path);
         
         Lexer lexer = new Lexer(sourceCode);
-        lexer.analex(); // Inicia a análise léxica
+        lexer.analex(); 
     }
 }
