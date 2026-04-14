@@ -1,17 +1,16 @@
 package application;
 
-import java.util.Map;
-
+import java.util.List;
+import model.entities.Lexer;
 import util.FileReaderUtil;
 
 public class Program {
-
-	public static void main(String[] args) {
-		String path = "C:/temp/compiladores/programa.go";
-		
-		Map<String, String> sourceCode = FileReaderUtil.readSourceFile(path);
-		
-		sourceCode.forEach((key, value) -> System.out.printf("%s %s%n",key,value));
-	}
-
+    public static void main(String[] args) {
+        String path = "C:/temp/compiladores/programa.go"; // Garante que este ficheiro existe!
+        
+        List<String> sourceCode = FileReaderUtil.readSourceFile(path);
+        
+        Lexer lexer = new Lexer(sourceCode);
+        lexer.analex(); // Inicia a análise léxica
+    }
 }
