@@ -19,41 +19,41 @@ public class Lexer implements IScanner {
 	}
 
 	private void initKeywords() {
-        keywords.put("break", TokenType.BREAK);
-        keywords.put("default", TokenType.DEFAULT);
-        keywords.put("func", TokenType.FUNC);
-        keywords.put("interface", TokenType.INTERFACE);
-        keywords.put("select", TokenType.SELECT);
+		keywords.put("break", TokenType.BREAK);
+		keywords.put("default", TokenType.DEFAULT);
+		keywords.put("func", TokenType.FUNC);
+		keywords.put("interface", TokenType.INTERFACE);
+		keywords.put("select", TokenType.SELECT);
 
-        keywords.put("case", TokenType.CASE);
-        keywords.put("defer", TokenType.DEFER);
-        keywords.put("go", TokenType.GO);
-        keywords.put("map", TokenType.MAP);
-        keywords.put("struct", TokenType.STRUCT);
+		keywords.put("case", TokenType.CASE);
+		keywords.put("defer", TokenType.DEFER);
+		keywords.put("go", TokenType.GO);
+		keywords.put("map", TokenType.MAP);
+		keywords.put("struct", TokenType.STRUCT);
 
-        keywords.put("chan", TokenType.CHAN);
-        keywords.put("else", TokenType.ELSE);
-        keywords.put("goto", TokenType.GOTO);
-        keywords.put("package", TokenType.PACKAGE);
-        keywords.put("switch", TokenType.SWITCH);
+		keywords.put("chan", TokenType.CHAN);
+		keywords.put("else", TokenType.ELSE);
+		keywords.put("goto", TokenType.GOTO);
+		keywords.put("package", TokenType.PACKAGE);
+		keywords.put("switch", TokenType.SWITCH);
 
-        keywords.put("const", TokenType.CONST);
-        keywords.put("fallthrough", TokenType.FALLTHROUGH);
-        keywords.put("if", TokenType.IF);
-        keywords.put("range", TokenType.RANGE);
-        keywords.put("type", TokenType.TYPE);
+		keywords.put("const", TokenType.CONST);
+		keywords.put("fallthrough", TokenType.FALLTHROUGH);
+		keywords.put("if", TokenType.IF);
+		keywords.put("range", TokenType.RANGE);
+		keywords.put("type", TokenType.TYPE);
 
-        keywords.put("continue", TokenType.CONTINUE);
-        keywords.put("for", TokenType.FOR);
-        keywords.put("import", TokenType.IMPORT);
-        keywords.put("return", TokenType.RETURN);
-        keywords.put("var", TokenType.VAR);
+		keywords.put("continue", TokenType.CONTINUE);
+		keywords.put("for", TokenType.FOR);
+		keywords.put("import", TokenType.IMPORT);
+		keywords.put("return", TokenType.RETURN);
+		keywords.put("var", TokenType.VAR);
 
-        // PREDECLARED IDENTIFIERS
-        keywords.put("true", TokenType.TRUE);
-        keywords.put("false", TokenType.FALSE);
-        keywords.put("nil", TokenType.NIL);
-    }
+		// PREDECLARED IDENTIFIERS
+		keywords.put("true", TokenType.TRUE);
+		keywords.put("false", TokenType.FALSE);
+		keywords.put("nil", TokenType.NIL);
+	}
 
 	@Override
 	public char lerCaractere() {
@@ -120,115 +120,115 @@ public class Lexer implements IScanner {
 				case 0:
 
 					if (Character.isLetter(c) || c == '_') {
-						state = 1;          // identificador / keyword
+						state = 1; // identificador / keyword
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (Character.isDigit(c)) {
-						state = 2;          // inteiro / float
+						state = 2; // inteiro / float
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '"') {
-						state = 10;         // string literal interpretada
+						state = 10; // string literal interpretada
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '\'') {
-						state = 11;         // rune literal
+						state = 11; // rune literal
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '`') {
-						state = 51;         // raw string literal
+						state = 51; // raw string literal
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '/') {
-						state = 20;         // /  /=  comentários
+						state = 20; // / /= comentários
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == ':') {
-						state = 30;         // :  :=
+						state = 30; // : :=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '<') {
-						state = 40;         // <  <=  <<  <<=  <-
+						state = 40; // < <= << <<= <-
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '>') {
-						state = 41;         // >  >=  >>  >>=
+						state = 41; // > >= >> >>=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '&') {
-						state = 42;         // &  &&  &^  &^=
+						state = 42; // & && &^ &^=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '|') {
-						state = 43;         // |  ||
+						state = 43; // | ||
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '+') {
-						state = 44;         // +  ++  +=
+						state = 44; // + ++ +=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '-') {
-						state = 45;         // -  --  -=
+						state = 45; // - -- -=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '=') {
-						state = 46;         // =  ==
+						state = 46; // = ==
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '*') {
-						state = 47;         // *  *=
+						state = 47; // * *=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '%') {
-						state = 48;         // %  %=
+						state = 48; // % %=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '!') {
-						state = 49;         // !  !=
+						state = 49; // ! !=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '^') {
-						state = 50;         // ^  ^=
+						state = 50; // ^ ^=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '.') {
-						state = 52;         // .  ...
+						state = 52; // . ...
 						lexeme.append(c);
 						c = lerCaractere();
 					}
@@ -287,7 +287,13 @@ public class Lexer implements IScanner {
 
 				// ── String literal interpretada ────────────────────────────
 				case 10:
-					if (c != '"') {
+					if (c == '\0') {
+						// O ficheiro acabou antes de encontrarmos o '"' final!
+						gravarTokenLexema(TokenType.UNKNOWN, lexeme.toString());
+						System.err
+								.println("Erro Léxico [Linha " + (linhaAtual + 1) + "]: String literal não terminada.");
+						done = true; // Quebra o ciclo para não encravar
+					} else if (c != '"') {
 						lexeme.append(c);
 						c = lerCaractere();
 					} else {
@@ -311,7 +317,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// ── '/' — /  /=  comentários ──────────────────────────────
+				// ── '/' — / /= comentários ──────────────────────────────
 				case 20:
 					if (c == '/') {
 						state = 21;
@@ -342,18 +348,42 @@ public class Lexer implements IScanner {
 
 				// ── Comentário de bloco ────────────────────────────────────
 				case 22:
+
 					while (true) {
-						if (c == '*' && lerCaractere() == '/') {
+
+						if (c == '\0') {
+							// EOF antes de fechar comentário
+							gravarTokenLexema(TokenType.UNKNOWN, lexeme.toString());
+							System.err.println(
+									"Erro Léxico [Linha " + (linhaAtual + 1) + "]: Comentário de bloco não terminado.");
+							done = true;
 							break;
 						}
-						c = lerCaractere();
+
+						if (c == '*') {
+							char next = lerCaractere();
+
+							if (next == '/') {
+								// fechou comentário
+								lexeme.append(c).append(next);
+								gravarTokenLexema(TokenType.BLOCK_COMMENT, lexeme.toString());
+								done = true;
+								c = lerCaractere();
+								break;
+							} else {
+								// não era fechamento
+								lexeme.append(c);
+								c = next;
+							}
+						} else {
+							lexeme.append(c);
+							c = lerCaractere();
+						}
 					}
-					gravarTokenLexema(TokenType.BLOCK_COMMENT, lexeme.toString());
-					done = true;
-					c = lerCaractere();
+
 					break;
 
-				// ── ':' — :  := ───────────────────────────────────────────
+				// ── ':' — : := ───────────────────────────────────────────
 				case 30:
 					if (c == '=') {
 						lexeme.append(c);
@@ -366,7 +396,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '<' — <  <=  <<  <<=  <- ──────────────────────────────
+				// ── '<' — < <= << <<= <- ──────────────────────────────
 				case 40:
 					if (c == '=') {
 						lexeme.append(c);
@@ -398,7 +428,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// ── '>' — >  >=  >>  >>= ─────────────────────────────────
+				// ── '>' — > >= >> >>= ─────────────────────────────────
 				case 41:
 					if (c == '=') {
 						lexeme.append(c);
@@ -425,7 +455,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// ── '&' — &  &&  &^  &^= ─────────────────────────────────
+				// ── '&' — & && &^ &^= ─────────────────────────────────
 				case 42:
 					if (c == '&') {
 						lexeme.append(c);
@@ -452,7 +482,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// ── '|' — |  || ───────────────────────────────────────────
+				// ── '|' — | || ───────────────────────────────────────────
 				case 43:
 					if (c == '|') {
 						lexeme.append(c);
@@ -465,7 +495,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '+' — +  ++  += ───────────────────────────────────────
+				// ── '+' — + ++ += ───────────────────────────────────────
 				case 44:
 					if (c == '+') {
 						lexeme.append(c);
@@ -481,7 +511,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '-' — -  --  -= ───────────────────────────────────────
+				// ── '-' — - -- -= ───────────────────────────────────────
 				case 45:
 					if (c == '-') {
 						lexeme.append(c);
@@ -497,7 +527,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '=' — =  == ───────────────────────────────────────────
+				// ── '=' — = == ───────────────────────────────────────────
 				case 46:
 					if (c == '=') {
 						lexeme.append(c);
@@ -510,7 +540,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '*' — *  *= ───────────────────────────────────────────
+				// ── '*' — * *= ───────────────────────────────────────────
 				case 47:
 					if (c == '=') {
 						lexeme.append(c);
@@ -523,7 +553,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '%' — %  %= ───────────────────────────────────────────
+				// ── '%' — % %= ───────────────────────────────────────────
 				case 48:
 					if (c == '=') {
 						lexeme.append(c);
@@ -536,7 +566,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '!' — !  != ───────────────────────────────────────────
+				// ── '!' — ! != ───────────────────────────────────────────
 				case 49:
 					if (c == '=') {
 						lexeme.append(c);
@@ -549,7 +579,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ── '^' — ^  ^= ───────────────────────────────────────────
+				// ── '^' — ^ ^= ───────────────────────────────────────────
 				case 50:
 					if (c == '=') {
 						lexeme.append(c);
@@ -563,19 +593,28 @@ public class Lexer implements IScanner {
 					break;
 
 				// ── '`' — raw string literal ──────────────────────────────
-				case 51:
-					if (c != '`') {
-						lexeme.append(c);
-						c = lerCaractere();
-					} else {
-						lexeme.append(c);
-						gravarTokenLexema(TokenType.RAW_STRING_LITERAL, lexeme.toString());
-						done = true;
-						c = lerCaractere();
-					}
-					break;
+				case 51: 
+				    if (c == '\0') {
+				        // EOF antes de fechar `
+				        gravarTokenLexema(TokenType.UNKNOWN, lexeme.toString());
+				        System.err.println("Erro Léxico [Linha " + (linhaAtual + 1) + "]: Raw string não terminada.");
+				        done = true;
+				    } 
+				    else if (c != '`') {
+				        lexeme.append(c);
+				        c = lerCaractere();
+				    } 
+				    else {
+				        // encontrou fechamento `
+				        lexeme.append(c);
+				        gravarTokenLexema(TokenType.RAW_STRING_LITERAL, lexeme.toString());
+				        done = true;
+				        c = lerCaractere();
+				    }
 
-				// ── '.' — .  ... ──────────────────────────────────────────
+				    break;
+
+				// ── '.' — . ... ──────────────────────────────────────────
 				case 52:
 					if (c == '.') {
 						lexeme.append(c);
