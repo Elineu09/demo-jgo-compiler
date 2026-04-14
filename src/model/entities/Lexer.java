@@ -116,95 +116,119 @@ public class Lexer implements IScanner {
 
 				switch (state) {
 
-				// Estado inicial
+				// ── Estado inicial ──────────────────────────────────────────
 				case 0:
 
 					if (Character.isLetter(c) || c == '_') {
-						state = 1;
+						state = 1;          // identificador / keyword
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (Character.isDigit(c)) {
-						state = 2;
+						state = 2;          // inteiro / float
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '"') {
-						state = 10; // string literal
+						state = 10;         // string literal interpretada
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '\'') {
-						state = 11; // rune literal
+						state = 11;         // rune literal
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '`') {
+						state = 51;         // raw string literal
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '/') {
-						state = 20; // comentário ou divisão
+						state = 20;         // /  /=  comentários
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == ':') {
-						state = 30; // := ou :
+						state = 30;         // :  :=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '<') {
-						state = 40; // <, <=, <<, <-
+						state = 40;         // <  <=  <<  <<=  <-
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '>') {
-						state = 41; // >, >=, >>
+						state = 41;         // >  >=  >>  >>=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '&') {
-						state = 42; // &, &&, &^
+						state = 42;         // &  &&  &^  &^=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '|') {
-						state = 43; // |, ||
+						state = 43;         // |  ||
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '+') {
-						state = 44; // +, ++, +=
+						state = 44;         // +  ++  +=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '-') {
-						state = 45; // -, --, -=
+						state = 45;         // -  --  -=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '=') {
-						state = 46; // =, ==
+						state = 46;         // =  ==
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '*') {
-						state = 47; // *, *=
+						state = 47;         // *  *=
 						lexeme.append(c);
 						c = lerCaractere();
 					}
 
 					else if (c == '%') {
-						state = 48; // %, %=
+						state = 48;         // %  %=
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '!') {
+						state = 49;         // !  !=
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '^') {
+						state = 50;         // ^  ^=
+						lexeme.append(c);
+						c = lerCaractere();
+					}
+
+					else if (c == '.') {
+						state = 52;         // .  ...
 						lexeme.append(c);
 						c = lerCaractere();
 					}
@@ -218,7 +242,7 @@ public class Lexer implements IScanner {
 
 					break;
 
-				// Identificador
+				// ── Identificador / keyword ────────────────────────────────
 				case 1:
 					if (Character.isLetterOrDigit(c) || c == '_') {
 						lexeme.append(c);
@@ -231,7 +255,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// Número inteiro
+				// ── Inteiro ────────────────────────────────────────────────
 				case 2:
 					if (Character.isDigit(c)) {
 						lexeme.append(c);
@@ -248,7 +272,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// Número float
+				// ── Float ──────────────────────────────────────────────────
 				case 3:
 					if (Character.isDigit(c)) {
 						lexeme.append(c);
@@ -261,7 +285,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// String literal
+				// ── String literal interpretada ────────────────────────────
 				case 10:
 					if (c != '"') {
 						lexeme.append(c);
@@ -274,7 +298,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// Rune literal
+				// ── Rune literal ───────────────────────────────────────────
 				case 11:
 					lexeme.append(c);
 					c = lerCaractere();
@@ -287,12 +311,12 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// '/' — comentário ou divisão
+				// ── '/' — /  /=  comentários ──────────────────────────────
 				case 20:
 					if (c == '/') {
-						state = 21; // comentário de linha
+						state = 21;
 					} else if (c == '*') {
-						state = 22; // comentário de bloco
+						state = 22;
 					} else if (c == '=') {
 						lexeme.append(c);
 						gravarTokenLexema(TokenType.DIVIDE_ASSIGN, lexeme.toString());
@@ -306,7 +330,7 @@ public class Lexer implements IScanner {
 					}
 					break;
 
-				// Comentário de linha
+				// ── Comentário de linha ────────────────────────────────────
 				case 21:
 					while (c != '\n' && c != '\0') {
 						lexeme.append(c);
@@ -316,7 +340,7 @@ public class Lexer implements IScanner {
 					done = true;
 					break;
 
-				// Comentário de bloco
+				// ── Comentário de bloco ────────────────────────────────────
 				case 22:
 					while (true) {
 						if (c == '*' && lerCaractere() == '/') {
@@ -329,7 +353,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// ':' — := ou :
+				// ── ':' — :  := ───────────────────────────────────────────
 				case 30:
 					if (c == '=') {
 						lexeme.append(c);
@@ -342,58 +366,93 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// '<' — <, <=, <<, <-
+				// ── '<' — <  <=  <<  <<=  <- ──────────────────────────────
 				case 40:
 					if (c == '=') {
 						lexeme.append(c);
 						gravarTokenLexema(TokenType.LESS_EQUAL, lexeme.toString());
+						done = true;
+						c = lerCaractere();
 					} else if (c == '<') {
 						lexeme.append(c);
-						gravarTokenLexema(TokenType.LEFT_SHIFT, lexeme.toString());
+						c = lerCaractere();
+						if (c == '=') {
+							lexeme.append(c);
+							gravarTokenLexema(TokenType.LEFT_SHIFT_ASSIGN, lexeme.toString());
+						} else {
+							voltarCaractere();
+							gravarTokenLexema(TokenType.LEFT_SHIFT, lexeme.toString());
+						}
+						done = true;
+						c = lerCaractere();
 					} else if (c == '-') {
 						lexeme.append(c);
 						gravarTokenLexema(TokenType.ARROW, lexeme.toString());
+						done = true;
+						c = lerCaractere();
 					} else {
 						voltarCaractere();
 						gravarTokenLexema(TokenType.LESS, lexeme.toString());
+						done = true;
+						c = lerCaractere();
 					}
-					done = true;
-					c = lerCaractere();
 					break;
 
-				// '>' — >, >=, >>
+				// ── '>' — >  >=  >>  >>= ─────────────────────────────────
 				case 41:
 					if (c == '=') {
 						lexeme.append(c);
 						gravarTokenLexema(TokenType.GREATER_EQUAL, lexeme.toString());
+						done = true;
+						c = lerCaractere();
 					} else if (c == '>') {
 						lexeme.append(c);
-						gravarTokenLexema(TokenType.RIGHT_SHIFT, lexeme.toString());
+						c = lerCaractere();
+						if (c == '=') {
+							lexeme.append(c);
+							gravarTokenLexema(TokenType.RIGHT_SHIFT_ASSIGN, lexeme.toString());
+						} else {
+							voltarCaractere();
+							gravarTokenLexema(TokenType.RIGHT_SHIFT, lexeme.toString());
+						}
+						done = true;
+						c = lerCaractere();
 					} else {
 						voltarCaractere();
 						gravarTokenLexema(TokenType.GREATER, lexeme.toString());
+						done = true;
+						c = lerCaractere();
 					}
-					done = true;
-					c = lerCaractere();
 					break;
 
-				// '&' — &, &&, &^
+				// ── '&' — &  &&  &^  &^= ─────────────────────────────────
 				case 42:
 					if (c == '&') {
 						lexeme.append(c);
 						gravarTokenLexema(TokenType.LOGICAL_AND, lexeme.toString());
+						done = true;
+						c = lerCaractere();
 					} else if (c == '^') {
 						lexeme.append(c);
-						gravarTokenLexema(TokenType.BIT_CLEAR, lexeme.toString());
+						c = lerCaractere();
+						if (c == '=') {
+							lexeme.append(c);
+							gravarTokenLexema(TokenType.BIT_CLEAR_ASSIGN, lexeme.toString());
+						} else {
+							voltarCaractere();
+							gravarTokenLexema(TokenType.BIT_CLEAR, lexeme.toString());
+						}
+						done = true;
+						c = lerCaractere();
 					} else {
 						voltarCaractere();
 						gravarTokenLexema(TokenType.BITWISE_AND, lexeme.toString());
+						done = true;
+						c = lerCaractere();
 					}
-					done = true;
-					c = lerCaractere();
 					break;
 
-				// '|' — |, ||
+				// ── '|' — |  || ───────────────────────────────────────────
 				case 43:
 					if (c == '|') {
 						lexeme.append(c);
@@ -406,7 +465,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// '+' — +, ++, +=
+				// ── '+' — +  ++  += ───────────────────────────────────────
 				case 44:
 					if (c == '+') {
 						lexeme.append(c);
@@ -422,7 +481,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// '-' — -, --, -=
+				// ── '-' — -  --  -= ───────────────────────────────────────
 				case 45:
 					if (c == '-') {
 						lexeme.append(c);
@@ -438,7 +497,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// '=' — =, ==
+				// ── '=' — =  == ───────────────────────────────────────────
 				case 46:
 					if (c == '=') {
 						lexeme.append(c);
@@ -451,7 +510,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// '*' — *, *=
+				// ── '*' — *  *= ───────────────────────────────────────────
 				case 47:
 					if (c == '=') {
 						lexeme.append(c);
@@ -464,7 +523,7 @@ public class Lexer implements IScanner {
 					c = lerCaractere();
 					break;
 
-				// '%' — %, %=
+				// ── '%' — %  %= ───────────────────────────────────────────
 				case 48:
 					if (c == '=') {
 						lexeme.append(c);
@@ -472,6 +531,66 @@ public class Lexer implements IScanner {
 					} else {
 						voltarCaractere();
 						gravarTokenLexema(TokenType.MOD, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				// ── '!' — !  != ───────────────────────────────────────────
+				case 49:
+					if (c == '=') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.NOT_EQUAL, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.LOGICAL_NOT, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				// ── '^' — ^  ^= ───────────────────────────────────────────
+				case 50:
+					if (c == '=') {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.XOR_ASSIGN, lexeme.toString());
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.XOR, lexeme.toString());
+					}
+					done = true;
+					c = lerCaractere();
+					break;
+
+				// ── '`' — raw string literal ──────────────────────────────
+				case 51:
+					if (c != '`') {
+						lexeme.append(c);
+						c = lerCaractere();
+					} else {
+						lexeme.append(c);
+						gravarTokenLexema(TokenType.RAW_STRING_LITERAL, lexeme.toString());
+						done = true;
+						c = lerCaractere();
+					}
+					break;
+
+				// ── '.' — .  ... ──────────────────────────────────────────
+				case 52:
+					if (c == '.') {
+						lexeme.append(c);
+						c = lerCaractere();
+						if (c == '.') {
+							lexeme.append(c);
+							gravarTokenLexema(TokenType.ELLIPSIS, lexeme.toString());
+						} else {
+							// ".." não é válido em Go — devolve segundo ponto e emite UNKNOWN
+							voltarCaractere();
+							gravarTokenLexema(TokenType.UNKNOWN, lexeme.toString());
+						}
+					} else {
+						voltarCaractere();
+						gravarTokenLexema(TokenType.DOT, lexeme.toString());
 					}
 					done = true;
 					c = lerCaractere();
@@ -502,8 +621,6 @@ public class Lexer implements IScanner {
 			return TokenType.SEMICOLON;
 		case ',':
 			return TokenType.COMMA;
-		case '.':
-			return TokenType.DOT;
 		default:
 			return TokenType.UNKNOWN;
 		}

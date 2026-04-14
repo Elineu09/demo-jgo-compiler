@@ -18,6 +18,7 @@ public enum TokenType {
     IMAGINARY_LITERAL,
     RUNE_LITERAL,      // char 
     STRING_LITERAL,
+    RAW_STRING_LITERAL,
 
     TRUE, FALSE,       // bool literals
     NIL,               // null equivalente
@@ -45,7 +46,7 @@ public enum TokenType {
     GREATER, GREATER_EQUAL,
 
     // Lógicos
-    LOGICAL_AND, LOGICAL_OR, LOGICAL_NOT, 
+    LOGICAL_AND, LOGICAL_OR, LOGICAL_NOT, XOR,
 
     // Bitwise
     BITWISE_AND, BITWISE_OR, BITWISE_XOR, BITWISE_NOT, // &, |, ^, ^
