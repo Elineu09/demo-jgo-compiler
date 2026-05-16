@@ -58,7 +58,7 @@ public class Parser {
         System.out.println("Tabela de Símbolos -> Adicionado: " + sym);
     }
 
-    // ─── Início da Análise Top-Down ─────────────────────────────────────────
+    // ─── Início da Análise top-down ─────────────────────────────────────────
 
     public void parse() {
         try {
