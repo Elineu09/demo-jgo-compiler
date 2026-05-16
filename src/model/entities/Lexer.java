@@ -91,7 +91,7 @@ public class Lexer implements IScanner {
 		Token token = new Token(type, lexeme, linhaAtual + 1, colunaAtual);
 		symbolTable.add(token);
 
-		System.out.println(token);
+		//System.out.println(token);
 	}
 
 	@Override
