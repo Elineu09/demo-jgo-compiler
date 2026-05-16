@@ -101,7 +101,7 @@ public class Lexer implements IScanner {
 
 		while (c != '\0') {
 
-			while (Character.isWhitespace(c)) {
+			while (Character.isWhitespace(c) || c == '\n' || c == '\r') {
 				c = lerCaractere();
 			}
 
@@ -118,6 +118,10 @@ public class Lexer implements IScanner {
 
 				// ── Estado inicial ──────────────────────────────────────────
 				case 0:
+					if (Character.isWhitespace(c) || c == '\n' || c == '\r') {
+						c = lerCaractere();
+						break;
+					}
 
 					if (Character.isLetter(c) || c == '_') {
 						state = 1; // identificador / keyword
@@ -321,8 +325,10 @@ public class Lexer implements IScanner {
 				case 20:
 					if (c == '/') {
 						state = 21;
+						c = lerCaractere();
 					} else if (c == '*') {
 						state = 22;
+						c = lerCaractere();
 					} else if (c == '=') {
 						lexeme.append(c);
 						gravarTokenLexema(TokenType.DIVIDE_ASSIGN, lexeme.toString());
@@ -342,8 +348,9 @@ public class Lexer implements IScanner {
 						lexeme.append(c);
 						c = lerCaractere();
 					}
-					gravarTokenLexema(TokenType.LINE_COMMENT, lexeme.toString());
-					done = true;
+					lexeme.setLength(0);
+					state = 0;
+					c = lerCaractere();
 					break;
 
 				// ── Comentário de bloco ────────────────────────────────────
@@ -353,7 +360,6 @@ public class Lexer implements IScanner {
 
 						if (c == '\0') {
 							// EOF antes de fechar comentário
-							gravarTokenLexema(TokenType.UNKNOWN, lexeme.toString());
 							System.err.println(
 									"Erro Léxico [Linha " + (linhaAtual + 1) + "]: Comentário de bloco não terminado.");
 							done = true;
@@ -364,23 +370,17 @@ public class Lexer implements IScanner {
 							char next = lerCaractere();
 
 							if (next == '/') {
-								// fechou comentário
-								lexeme.append(c).append(next);
-								gravarTokenLexema(TokenType.BLOCK_COMMENT, lexeme.toString());
-								done = true;
 								c = lerCaractere();
-								break;
+								break; // fechou comentário
 							} else {
-								// não era fechamento
-								lexeme.append(c);
 								c = next;
 							}
 						} else {
-							lexeme.append(c);
 							c = lerCaractere();
 						}
 					}
-
+					lexeme.setLength(0);
+					state = 0;
 					break;
 
 				// ── ':' — : := ───────────────────────────────────────────
