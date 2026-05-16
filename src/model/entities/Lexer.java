@@ -664,4 +664,8 @@ public class Lexer implements IScanner {
 			return TokenType.UNKNOWN;
 		}
 	}
+	
+	public List<Token> getTokens() {
+		return symbolTable;
+	}
 }
