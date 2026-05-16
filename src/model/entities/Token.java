@@ -15,6 +15,22 @@ public class Token {
         this.column = column;
     }
     
+    public TokenType getType() {
+    	return type;
+    }
+    
+    public String getValue() {
+    	return value;
+    }
+    
+    public int getLine() {
+    	return line;
+    }
+    
+    public int getColumn() {
+    	return column;
+    }
+    
     @Override 
     public String toString() {
         return String.format("[%02d:%02d] %s(\"%s\")", line, column, type, value);
